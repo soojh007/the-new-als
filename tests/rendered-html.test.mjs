@@ -31,20 +31,22 @@ test("server-renders the adaptive learning product shell", async () => {
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
-  assert.match(html, /<title>Adaptive Algebra Studio<\/title>/i);
+  assert.match(html, /<title>Adaptive Grammar Studio<\/title>/i);
   assert.match(html, /Learning goal/);
-  assert.match(html, /Prototype mode\. Learner progress is local to this session\./);
+  assert.match(html, /Prototype mode\. Verb mastery is local to this session\./);
   assert.match(html, /Student answer/);
   assert.match(html, /BKT parameters/);
   assert.match(html, /Preview BKT calculation/);
   assert.match(html, /No answer has been submitted/);
   assert.match(html, /Before answer/);
-  assert.match(html, /chance learner knows this skill/);
+  assert.match(html, /chance learner knows this verb skill/);
   assert.match(html, /evidence-adjusted mastery/);
   assert.match(html, /mastery for next question/);
   assert.match(html, /Knows and correct/);
   assert.match(html, /Guessed and correct/);
-  assert.match(html, /Reusable content object/);
+  assert.match(html, /Verbs curriculum map/);
+  assert.match(html, /Reusable grammar item/);
+  assert.match(html, /Yesterday, Ali/);
   assert.doesNotMatch(html, /Your site is taking shape|react-loading-skeleton|codex-preview/i);
 });
 
@@ -59,8 +61,9 @@ test("removes disposable starter preview files and metadata", async () => {
   assert.match(page, /calculateBkt/);
   assert.match(page, /Wrong despite knowing it/);
   assert.match(page, /Adaptive next/);
-  assert.match(layout, /Adaptive Algebra Studio/);
-  assert.match(packageJson, /"name": "adaptive-algebra-studio"/);
+  assert.match(page, /Verb tense basics/);
+  assert.match(layout, /Adaptive Grammar Studio/);
+  assert.match(packageJson, /"name": "adaptive-grammar-studio"/);
   assert.match(readme, /Bayesian Knowledge Tracing/);
   assert.doesNotMatch(page, /SkeletonPreview|_sites-preview|codex-preview/);
   assert.doesNotMatch(layout, /Starter Project|codex-preview|_sites-preview/);

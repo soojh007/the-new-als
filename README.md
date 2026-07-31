@@ -1,16 +1,26 @@
-# Adaptive Algebra Studio
+# Adaptive Grammar Studio
 
-A modern adaptive learning prototype inspired by OATutor's core architecture:
-content-driven problems, skill tags, scaffolded hints, mastery estimates, and
-adaptive next-problem selection.
+A modern adaptive learning prototype for grammar, focused on verbs. It keeps the
+OATutor-inspired architecture: content-driven items, skill tags, scaffolded
+hints, mastery estimates, and adaptive next-item selection.
+
+## Current Module
+
+Verb tense basics:
+
+- Simple present
+- Simple past
+- Simple future
+- Regular past `-ed`
+- Irregular past tense
 
 ## What It Demonstrates
 
-- A learner-facing tutor surface with answer checking and progressive hints
-- A small Bayesian Knowledge Tracing style mastery update per skill
-- Adaptive problem selection based on the lowest-confidence skill
-- A reusable JSON-like content object for problems, answers, hints, and skills
-- Learning-event logging that shows how student actions change the model
+- A learner-facing grammar tutor with multiple-choice and typed answers
+- A small Bayesian Knowledge Tracing style mastery update per verb skill
+- Adaptive item selection based on lowest estimated mastery and difficulty band
+- A reusable JSON-like grammar item object with options, answer, hints, and skill tag
+- A verbs curriculum map that can later become the teacher authoring structure
 
 ## Run Locally
 
@@ -30,8 +40,8 @@ npm test
 
 ## Next Product Steps
 
-- Move lesson content into versioned JSON files or a database
-- Add an authoring interface for skills, problems, hints, and rubrics
+- Move grammar content into versioned JSON files or a database
+- Add a teacher authoring view for verb skills, distractors, hints, and rubrics
+- Add misconception tags, such as overusing `-ed` for irregular verbs
 - Persist learner sessions and mastery histories
-- Add richer answer evaluators for algebraic equivalence
-- Expand the adaptive policy beyond weakest-skill selection
+- Add hint-aware BKT so assisted correct answers give smaller mastery gains
