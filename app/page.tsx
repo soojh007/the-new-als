@@ -7,10 +7,12 @@ import {
   Check,
   ChevronRight,
   CircleHelp,
+  ClipboardList,
   FileJson,
   Flame,
   Lightbulb,
   ListChecks,
+  Menu,
   RotateCcw,
   Send,
   SlidersHorizontal,
@@ -240,31 +242,74 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f6f5ef] text-[#1d2626]">
+    <main className="min-h-screen bg-[#f1f3f7] text-[#20242a]">
+      <header className="sls-topbar">
+        <div className="sls-logo">SLS</div>
+        <span className="class-chip">[ALS] Adaptive Algebra</span>
+        <p>2.2.1 Linear equations and algebra readiness</p>
+        <div className="topbar-actions">
+          <button aria-label="Menu">
+            <Menu size={18} />
+          </button>
+          <button aria-label="Learner profile">
+            <Brain size={18} />
+          </button>
+        </div>
+      </header>
+      <div className="paused-band">
+        <ClipboardList size={15} />
+        <span>Prototype mode. Learner progress is local to this session.</span>
+      </div>
+
       <section className="workspace-shell">
-        <aside className="side-rail" aria-label="Product navigation">
-          <div className="brand-mark">
-            <Brain size={22} aria-hidden="true" />
+        <aside className="lesson-nav" aria-label="Lesson navigation">
+          <div className="nav-tools">
+            <button>Expand All</button>
+            <span />
+            <button>Collapse All</button>
           </div>
-          <button className="rail-button active" aria-label="Tutor">
-            <Target size={20} />
-          </button>
-          <button className="rail-button" aria-label="Mastery analytics">
-            <BarChart3 size={20} />
-          </button>
-          <button className="rail-button" aria-label="Content schema">
-            <FileJson size={20} />
-          </button>
-          <button className="rail-button" aria-label="Tuning">
-            <SlidersHorizontal size={20} />
-          </button>
+
+          <div className="module-block">
+            <div className="module-heading">
+              <span className="folder-icon">A</span>
+              <strong>2.2.1 Adaptive algebra pathway</strong>
+            </div>
+            <div className="lesson-step active-step">
+              <span>1</span>
+              <div>
+                <strong>Activate Learning</strong>
+                <em>ADAPTIVE TUTOR</em>
+              </div>
+            </div>
+            <div className="lesson-step">
+              <span>2</span>
+              <div>
+                <strong>Promote Thinking</strong>
+                <em className="purple">MASTERY REVIEW</em>
+              </div>
+            </div>
+            <div className="lesson-step">
+              <span>3</span>
+              <div>
+                <strong>Facilitate Practice</strong>
+                <em className="orange">CONTENT BUILDER</em>
+              </div>
+            </div>
+          </div>
         </aside>
 
         <section className="product-frame">
           <header className="top-bar">
             <div>
-              <p className="eyebrow">Adaptive Algebra Studio</p>
-              <h1>Learn by solving. Adapt every step.</h1>
+              <div className="activity-title">
+                <span>1</span>
+                <p>Activate Learning</p>
+              </div>
+              <h1>Learning goal</h1>
+              <p className="goal-copy">
+                By the end of this activity, the learner can solve linear equations, explain each inverse operation,
+                and use feedback from hints to repair weaker algebra skills.
+              </p>
             </div>
             <div className="session-score" aria-label="Current weakest skill">
               <Flame size={18} />
@@ -277,7 +322,7 @@ export default function Home() {
             <section className="tutor-surface" aria-label="Active tutoring problem">
               <div className="problem-header">
                 <div>
-                  <p>{current.difficulty} practice</p>
+                  <p>Q1 · {current.difficulty} practice</p>
                   <h2>{current.title}</h2>
                 </div>
                 <span>{activeSkill.label}</span>

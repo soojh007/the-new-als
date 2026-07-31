@@ -32,7 +32,8 @@ test("server-renders the adaptive learning product shell", async () => {
 
   const html = await response.text();
   assert.match(html, /<title>Adaptive Algebra Studio<\/title>/i);
-  assert.match(html, /Learn by solving\. Adapt every step\./);
+  assert.match(html, /Learning goal/);
+  assert.match(html, /Prototype mode\. Learner progress is local to this session\./);
   assert.match(html, /Student answer/);
   assert.match(html, /BKT parameters/);
   assert.match(html, /Reusable content object/);
