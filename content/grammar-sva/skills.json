@@ -1,0 +1,92 @@
+[
+  {
+    "id": "identify-subject",
+    "label": "Identify subject",
+    "description": "Find who or what the sentence is about, ignoring opening phrases.",
+    "mastery": 0.1,
+    "learn": 0.1,
+    "guess": 0.1,
+    "slip": 0.1
+  },
+  {
+    "id": "identify-head-noun",
+    "label": "Identify head noun",
+    "description": "Find the main noun inside a longer subject noun phrase.",
+    "mastery": 0.1,
+    "learn": 0.1,
+    "guess": 0.1,
+    "slip": 0.1
+  },
+  {
+    "id": "subject-number",
+    "label": "Subject number",
+    "description": "Decide whether the subject is singular or plural.",
+    "mastery": 0.1,
+    "learn": 0.1,
+    "guess": 0.1,
+    "slip": 0.1
+  },
+  {
+    "id": "regular-verb-agreement",
+    "label": "Regular verbs",
+    "description": "Choose regular present-tense verbs that agree with the subject.",
+    "mastery": 0.1,
+    "learn": 0.1,
+    "guess": 0.1,
+    "slip": 0.1
+  },
+  {
+    "id": "be-verb-agreement",
+    "label": "Be verbs",
+    "description": "Choose am, is, are, was, or were according to subject and time.",
+    "mastery": 0.1,
+    "learn": 0.1,
+    "guess": 0.1,
+    "slip": 0.1
+  },
+  {
+    "id": "verb-phrase-agreement",
+    "label": "Verb phrases",
+    "description": "Choose helping verb phrases that agree with the subject.",
+    "mastery": 0.1,
+    "learn": 0.1,
+    "guess": 0.1,
+    "slip": 0.1
+  },
+  {
+    "id": "premodified-subject",
+    "label": "Information before noun",
+    "description": "Use the head noun when extra information appears before it.",
+    "mastery": 0.1,
+    "learn": 0.1,
+    "guess": 0.1,
+    "slip": 0.1
+  },
+  {
+    "id": "postmodified-subject",
+    "label": "Information after noun",
+    "description": "Use the head noun when extra information appears after it.",
+    "mastery": 0.1,
+    "learn": 0.1,
+    "guess": 0.1,
+    "slip": 0.1
+  },
+  {
+    "id": "relative-clause-subject",
+    "label": "Relative clauses",
+    "description": "Ignore relative clauses when deciding which verb agrees with the subject.",
+    "mastery": 0.1,
+    "learn": 0.1,
+    "guess": 0.1,
+    "slip": 0.1
+  },
+  {
+    "id": "compound-subject",
+    "label": "And / or subjects",
+    "description": "Handle compound subjects joined by and or or.",
+    "mastery": 0.1,
+    "learn": 0.1,
+    "guess": 0.1,
+    "slip": 0.1
+  }
+]

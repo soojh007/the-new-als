@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Adaptive Grammar Studio",
+  title: "Adaptive SVA Studio",
   description:
-    "A modern adaptive learning prototype for verb grammar with mastery modeling, scaffolded hints, and content-driven tutoring.",
+    "A modern adaptive learning prototype for subject-verb agreement with mastery modeling, scaffolded hints, and content-driven tutoring.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",

@@ -20,8 +20,11 @@ import {
   Target,
 } from "lucide-react";
 import { FormEvent, useMemo, useState } from "react";
+import curriculumData from "@/content/grammar-sva/curriculum.json";
+import itemData from "@/content/grammar-sva/items.json";
+import skillData from "@/content/grammar-sva/skills.json";
 
-type SkillId = "simple-present" | "simple-past" | "simple-future" | "regular-past" | "irregular-past";
+type SkillId = string;
 
 type Skill = {
   id: SkillId;
@@ -35,6 +38,8 @@ type Skill = {
 
 type Problem = {
   id: string;
+  ku: string;
+  sourcePage: number;
   title: string;
   prompt: string;
   skill: SkillId;
@@ -43,9 +48,11 @@ type Problem = {
   options: string[];
   hints: string[];
   scaffold: string;
+  answerStatus: string;
 };
 
 type CurriculumNode = {
+  ku: string;
   title: string;
   goal: string;
   skills: SkillId[];
@@ -71,172 +78,9 @@ type BktCalculation = {
   learn: number;
 };
 
-const initialSkills: Record<SkillId, Skill> = {
-  "simple-present": {
-    id: "simple-present",
-    label: "Simple present",
-    description: "Use present-tense verbs for habits, facts, and repeated actions.",
-    mastery: 0.34,
-    learn: 0.14,
-    guess: 0.25,
-    slip: 0.12,
-  },
-  "simple-past": {
-    id: "simple-past",
-    label: "Simple past",
-    description: "Use past-tense verbs with time markers such as yesterday and last week.",
-    mastery: 0.28,
-    learn: 0.16,
-    guess: 0.24,
-    slip: 0.14,
-  },
-  "simple-future": {
-    id: "simple-future",
-    label: "Simple future",
-    description: "Use will plus the base verb for future actions.",
-    mastery: 0.46,
-    learn: 0.13,
-    guess: 0.22,
-    slip: 0.1,
-  },
-  "regular-past": {
-    id: "regular-past",
-    label: "Regular past -ed",
-    description: "Form regular past tense verbs accurately, including spelling changes.",
-    mastery: 0.38,
-    learn: 0.15,
-    guess: 0.2,
-    slip: 0.13,
-  },
-  "irregular-past": {
-    id: "irregular-past",
-    label: "Irregular past",
-    description: "Choose common irregular past forms such as went, ate, saw, and took.",
-    mastery: 0.22,
-    learn: 0.12,
-    guess: 0.18,
-    slip: 0.16,
-  },
-};
-
-const curriculumMap: CurriculumNode[] = [
-  {
-    title: "1. Recognise verbs",
-    goal: "Identify action, being, and having verbs in sentences.",
-    skills: ["simple-present"],
-  },
-  {
-    title: "2. Verb tense basics",
-    goal: "Choose simple present, simple past, and simple future forms from context clues.",
-    skills: ["simple-present", "simple-past", "simple-future"],
-  },
-  {
-    title: "3. Past tense forms",
-    goal: "Distinguish regular -ed forms from high-frequency irregular verbs.",
-    skills: ["regular-past", "irregular-past"],
-  },
-  {
-    title: "4. Subject-verb agreement",
-    goal: "Match present-tense verbs to singular and plural subjects.",
-    skills: ["simple-present"],
-  },
-  {
-    title: "5. Verb phrases",
-    goal: "Use helping verbs with -ing and past participle forms.",
-    skills: ["simple-future", "irregular-past"],
-  },
-];
-
-const problems: Problem[] = [
-  {
-    id: "verb-present-001",
-    title: "Habit in the present",
-    prompt: "Every morning, Maya ____ her plants.",
-    skill: "simple-present",
-    difficulty: "Core",
-    answer: "waters",
-    options: ["water", "waters", "watered"],
-    hints: ["Every morning shows a repeated action.", "Maya is one person.", "For he, she, it, or one named person, add -s."],
-    scaffold: "Look for the time clue, identify the subject, then choose the verb form.",
-  },
-  {
-    id: "verb-present-002",
-    title: "Fact in the present",
-    prompt: "The sun ____ in the east.",
-    skill: "simple-present",
-    difficulty: "Repair",
-    answer: "rises",
-    options: ["rise", "rises", "rose"],
-    hints: ["This sentence states a fact.", "The sun is singular.", "A singular subject uses rises."],
-    scaffold: "Facts usually use simple present tense.",
-  },
-  {
-    id: "verb-past-001",
-    title: "Past time marker",
-    prompt: "Yesterday, Ali ____ football after school.",
-    skill: "simple-past",
-    difficulty: "Core",
-    answer: "played",
-    options: ["play", "plays", "played"],
-    hints: ["Yesterday tells us the action happened in the past.", "Play is a regular verb.", "For regular past tense, add -ed."],
-    scaffold: "Use the time marker to decide the tense before looking at the answer options.",
-  },
-  {
-    id: "verb-past-002",
-    title: "Last week",
-    prompt: "Last week, the class ____ the museum.",
-    skill: "simple-past",
-    difficulty: "Stretch",
-    answer: "visited",
-    options: ["visit", "visits", "visited"],
-    hints: ["Last week is a past time phrase.", "The verb visit is regular.", "Regular past tense uses visited."],
-    scaffold: "Past time phrases usually require simple past tense.",
-  },
-  {
-    id: "verb-future-001",
-    title: "Plan for tomorrow",
-    prompt: "Tomorrow, we ____ our project.",
-    skill: "simple-future",
-    difficulty: "Core",
-    answer: "will present",
-    options: ["present", "presented", "will present"],
-    hints: ["Tomorrow points to the future.", "Use will before the base verb.", "The base verb stays present after will."],
-    scaffold: "Future time clue plus will plus base verb.",
-  },
-  {
-    id: "verb-regular-001",
-    title: "Add -ed",
-    prompt: "The children ____ loudly during the game.",
-    skill: "regular-past",
-    difficulty: "Core",
-    answer: "cheered",
-    options: ["cheer", "cheered", "cheering"],
-    hints: ["The sentence describes a completed action.", "Cheer is regular.", "Add -ed to form cheered."],
-    scaffold: "Check whether the verb is regular before adding -ed.",
-  },
-  {
-    id: "verb-irregular-001",
-    title: "Irregular past: go",
-    prompt: "Last night, Siti ____ to the library.",
-    skill: "irregular-past",
-    difficulty: "Core",
-    answer: "went",
-    options: ["go", "goed", "went"],
-    hints: ["Last night tells us the action is past.", "Go is irregular.", "The past tense of go is went."],
-    scaffold: "Some common verbs do not use -ed. They need memorised irregular forms.",
-  },
-  {
-    id: "verb-irregular-002",
-    title: "Irregular past: eat",
-    prompt: "At recess, Jonah ____ a sandwich.",
-    skill: "irregular-past",
-    difficulty: "Repair",
-    answer: "ate",
-    options: ["eat", "eated", "ate"],
-    hints: ["The sentence describes a completed past action.", "Eat is irregular.", "The past tense of eat is ate."],
-    scaffold: "If the -ed form sounds wrong, check whether the verb is irregular.",
-  },
-];
+const curriculumMap = curriculumData as CurriculumNode[];
+const problems = itemData as Problem[];
+const initialSkills = Object.fromEntries((skillData as Skill[]).map((skill) => [skill.id, skill])) as Record<SkillId, Skill>;
 
 function normalizeAnswer(value: string) {
   return value.toLowerCase().trim().replace(/[.!?]/g, "").replace(/\s+/g, " ");
@@ -299,8 +143,8 @@ export default function Home() {
   const [lastCalculation, setLastCalculation] = useState<BktCalculation | null>(null);
   const [events, setEvents] = useState<EventLog[]>([
     {
-      label: "Grammar module initialized",
-      detail: "Verb tense basics loaded with five tracked verb skills.",
+      label: "SVA module initialized",
+      detail: "Subject-verb agreement content loaded from the combined SLS PDF.",
     },
   ]);
 
@@ -405,15 +249,15 @@ export default function Home() {
     setAttemptedIds([]);
     setFeedback(null);
     setLastCalculation(null);
-    setEvents([{ label: "Session reset", detail: "Verb mastery estimates returned to the seed learner profile." }]);
+    setEvents([{ label: "Session reset", detail: "SVA mastery estimates returned to the seed learner profile." }]);
   }
 
   return (
     <main className="min-h-screen bg-[#f1f3f7] text-[#20242a]">
       <header className="sls-topbar">
         <div className="sls-logo">SLS</div>
-        <span className="class-chip">[ALS] Grammar Verbs</span>
-        <p>2.2.1 Verb tense basics and adaptive grammar practice</p>
+        <span className="class-chip">[ALS] Subject-Verb Agreement</span>
+        <p>Primary 4 subject-verb agreement adaptive grammar practice</p>
         <div className="topbar-actions">
           <button aria-label="Menu">
             <Menu size={18} />
@@ -425,7 +269,7 @@ export default function Home() {
       </header>
       <div className="paused-band">
         <ClipboardList size={15} />
-        <span>Prototype mode. Verb mastery is local to this session.</span>
+        <span>Prototype mode. Subject-verb agreement mastery is local to this session.</span>
       </div>
 
       <section className="workspace-shell">
@@ -439,26 +283,26 @@ export default function Home() {
           <div className="module-block">
             <div className="module-heading">
               <span className="folder-icon">A</span>
-              <strong>Grammar ALS: verbs curriculum map</strong>
+              <strong>Grammar ALS: subject-verb agreement map</strong>
             </div>
             <div className="lesson-step active-step">
               <span>1</span>
               <div>
-                <strong>Verb Tense Basics</strong>
+                <strong>KU1: What is a subject?</strong>
                 <em>ADAPTIVE TUTOR</em>
               </div>
             </div>
             <div className="lesson-step">
               <span>2</span>
               <div>
-                <strong>Past Tense Forms</strong>
+                <strong>KU2-KU4: Verb Agreement</strong>
                 <em className="purple">MASTERY REVIEW</em>
               </div>
             </div>
             <div className="lesson-step">
               <span>3</span>
               <div>
-                <strong>Teacher Item Bank</strong>
+                <strong>KU5-KU9: Complex Subjects</strong>
                 <em className="orange">CONTENT BUILDER</em>
               </div>
             </div>
@@ -474,8 +318,8 @@ export default function Home() {
               </div>
               <h1>Learning goal</h1>
               <p className="goal-copy">
-                By the end of this activity, the learner can use context clues to choose simple present, simple past,
-                and simple future verb forms, including common regular and irregular past tense verbs.
+                By the end of this activity, the learner can identify the subject, decide whether it is singular or
+                plural, and choose a verb or verb phrase that agrees with that subject.
               </p>
             </div>
             <div className="session-score" aria-label="Current weakest skill">
@@ -519,7 +363,7 @@ export default function Home() {
                     id="answer"
                     value={answer}
                     onChange={(event) => setAnswer(event.target.value)}
-                    placeholder="Choose or type the verb form"
+                    placeholder="Choose or type the answer"
                     autoComplete="off"
                   />
                   <button type="submit" aria-label="Submit answer">
@@ -533,7 +377,7 @@ export default function Home() {
                   {feedback === "correct" ? <Check size={18} /> : <CircleHelp size={18} />}
                   <span>
                     {feedback === "correct"
-                      ? "Good grammar signal. The mastery model increased confidence for this verb skill."
+                      ? "Good grammar signal. The mastery model increased confidence for this SVA skill."
                       : `Not yet. The target answer is "${current.answer}", so the tutor will bias toward repair practice.`}
                   </span>
                 </div>
@@ -568,7 +412,7 @@ export default function Home() {
               <section className="mastery-panel">
                 <div className="panel-title">
                   <BarChart3 size={18} />
-                  <h2>Verb mastery</h2>
+                  <h2>SVA mastery</h2>
                 </div>
                 {Object.values(skills).map((skill) => (
                   <div className="skill-row" key={skill.id}>
@@ -605,7 +449,7 @@ export default function Home() {
           <section className="curriculum-panel">
             <div className="panel-title">
               <ListChecks size={18} />
-              <h2>Verbs curriculum map</h2>
+              <h2>Subject-verb agreement curriculum map</h2>
             </div>
             <div className="curriculum-grid">
               {curriculumMap.map((node) => (
@@ -628,10 +472,13 @@ export default function Home() {
                 {JSON.stringify(
                   {
                     id: current.id,
+                    ku: current.ku,
+                    sourcePage: current.sourcePage,
                     skill: current.skill,
                     difficulty: current.difficulty,
                     options: current.options,
                     answer: current.answer,
+                    answerStatus: current.answerStatus,
                     hints: current.hints,
                   },
                   null,
@@ -689,7 +536,7 @@ export default function Home() {
               <div className="flow-source">
                 <p>Before answer</p>
                 <strong>{pct(displayedCalculation.masteryBefore)}</strong>
-                <span>chance learner knows this verb skill</span>
+                <span>chance learner knows this SVA skill</span>
               </div>
               <div className="flow-branches">
                 <div className="flow-path knows-path">

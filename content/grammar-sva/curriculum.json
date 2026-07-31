@@ -1,0 +1,56 @@
+[
+  {
+    "ku": "KU1",
+    "title": "What is a subject?",
+    "goal": "Identify the subject in a sentence and notice whether it is singular or plural.",
+    "skills": ["identify-subject", "identify-head-noun", "subject-number"]
+  },
+  {
+    "ku": "KU2",
+    "title": "Using regular verbs with different subjects",
+    "goal": "Choose regular verbs that agree with singular and plural subjects.",
+    "skills": ["regular-verb-agreement", "subject-number"]
+  },
+  {
+    "ku": "KU3",
+    "title": "Using be verbs with different subjects",
+    "goal": "Choose am, is, are, was, and were according to subject and time.",
+    "skills": ["be-verb-agreement", "subject-number"]
+  },
+  {
+    "ku": "KU4",
+    "title": "Using verb phrases with different subjects",
+    "goal": "Choose helping verb phrases that agree with singular and plural subjects.",
+    "skills": ["verb-phrase-agreement", "subject-number"]
+  },
+  {
+    "ku": "KU5",
+    "title": "What types of nouns do subjects have?",
+    "goal": "Use noun type and subject number to support subject-verb agreement.",
+    "skills": ["subject-number", "identify-head-noun"]
+  },
+  {
+    "ku": "KU6",
+    "title": "Subjects with information before the head noun",
+    "goal": "Find the head noun when modifiers appear before the subject.",
+    "skills": ["premodified-subject", "identify-head-noun", "regular-verb-agreement"]
+  },
+  {
+    "ku": "KU7",
+    "title": "Subjects with information after the head noun",
+    "goal": "Find the head noun when phrases appear after the subject.",
+    "skills": ["postmodified-subject", "identify-head-noun", "regular-verb-agreement"]
+  },
+  {
+    "ku": "KU8",
+    "title": "Subjects with relative clauses",
+    "goal": "Ignore relative clauses and match the verb to the true subject.",
+    "skills": ["relative-clause-subject", "regular-verb-agreement"]
+  },
+  {
+    "ku": "KU9",
+    "title": "Subjects with and / or",
+    "goal": "Apply agreement rules for compound subjects joined by and or or.",
+    "skills": ["compound-subject", "regular-verb-agreement"]
+  }
+]
