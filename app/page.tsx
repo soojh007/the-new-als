@@ -203,12 +203,11 @@ export default function Home() {
   const displayedCalculation = lastCalculation ?? previewCalculation;
   const observationText = displayedCalculation.correct ? "correct" : "wrong";
   const observationSymbol = displayedCalculation.correct ? "Correct" : "Wrong";
-  const knownObservationSymbol = displayedCalculation.correct ? "P(Correct | Knows)" : "P(Wrong | Knows)";
-  const unknownObservationSymbol = displayedCalculation.correct ? "P(Correct | Not mastered)" : "P(Wrong | Not mastered)";
   const knownRateLabel = displayedCalculation.correct ? "Correct if they know it" : "Wrong despite knowing it";
   const unknownRateLabel = displayedCalculation.correct ? "Correct by guessing" : "Wrong if not mastered";
   const knownEvidenceLabel = displayedCalculation.correct ? "Knows and correct" : "Knows but slipped";
   const unknownEvidenceLabel = displayedCalculation.correct ? "Guessed and correct" : "Not mastered and wrong";
+  const observedOutcomeLabel = displayedCalculation.correct ? "Observed correct answer" : "Observed wrong answer";
 
   const recommended = useMemo(() => {
     const weak = Object.values(skills).sort((a, b) => a.mastery - b.mastery)[0];
@@ -522,74 +521,70 @@ export default function Home() {
                 ? `This uses the ${displayedCalculation.skillLabel} mastery before the learner's ${observationText} answer.`
                 : "No answer has been submitted for this problem yet, so this previews the correct-answer path."}
             </p>
-            <div className="equation-card">
-              <div className="equation-row symbolic">
-                <span>P(Knows | {observationSymbol})</span>
-                <strong>=</strong>
-                <span>
-                  P(Knows) x {knownObservationSymbol}
-                  <em>P(Knows) x {knownObservationSymbol} + P(Not mastered) x {unknownObservationSymbol}</em>
-                </span>
+            <div className="bkt-flow">
+              <div className="flow-source">
+                <p>Before answer</p>
+                <strong>{pct(displayedCalculation.masteryBefore)}</strong>
+                <span>chance learner knows this skill</span>
               </div>
-              <div className="equation-row numeric">
-                <span>P(Knows | {observationSymbol})</span>
-                <strong>=</strong>
-                <span>
-                  {decimal(displayedCalculation.masteryBefore)} x {decimal(displayedCalculation.knownObservationRate)}
-                  <em>
-                    {decimal(displayedCalculation.masteryBefore)} x {decimal(displayedCalculation.knownObservationRate)} +{" "}
-                    {decimal(displayedCalculation.complement)} x {decimal(displayedCalculation.unknownObservationRate)}
-                  </em>
-                </span>
+              <div className="flow-branches">
+                <div className="flow-path knows-path">
+                  <div className="path-node">
+                    <span>P(Knows)</span>
+                    <strong>{decimal(displayedCalculation.masteryBefore)}</strong>
+                  </div>
+                  <div className="path-multiply">x</div>
+                  <div className="path-node">
+                    <span>{knownRateLabel}</span>
+                    <strong>{decimal(displayedCalculation.knownObservationRate)}</strong>
+                  </div>
+                  <div className="path-equals">=</div>
+                  <div className="path-node evidence-node">
+                    <span>{knownEvidenceLabel}</span>
+                    <strong>{decimal(displayedCalculation.knownEvidence)}</strong>
+                  </div>
+                </div>
+                <div className="flow-path not-path">
+                  <div className="path-node">
+                    <span>P(Not mastered)</span>
+                    <strong>{decimal(displayedCalculation.complement)}</strong>
+                  </div>
+                  <div className="path-multiply">x</div>
+                  <div className="path-node">
+                    <span>{unknownRateLabel}</span>
+                    <strong>{decimal(displayedCalculation.unknownObservationRate)}</strong>
+                  </div>
+                  <div className="path-equals">=</div>
+                  <div className="path-node evidence-node">
+                    <span>{unknownEvidenceLabel}</span>
+                    <strong>{decimal(displayedCalculation.unknownEvidence)}</strong>
+                  </div>
+                </div>
               </div>
-              <div className="equation-row numeric">
-                <span>P(Knows | {observationSymbol})</span>
-                <strong>=</strong>
-                <span>
-                  {decimal(displayedCalculation.knownEvidence)}
-                  <em>
+              <div className="flow-result">
+                <p>{observedOutcomeLabel}</p>
+                <div className="mini-equation">
+                  <strong>{decimal(displayedCalculation.knownEvidence)}</strong>
+                  <span>
                     {decimal(displayedCalculation.knownEvidence)} + {decimal(displayedCalculation.unknownEvidence)}
-                  </em>
+                  </span>
+                </div>
+                <strong>{pct(displayedCalculation.posterior)}</strong>
+                <span>evidence-adjusted mastery</span>
+              </div>
+              <div className="flow-next">
+                <p>Add learning</p>
+                <span>
+                  {pct(displayedCalculation.posterior)} + remaining gap x {decimal(displayedCalculation.learn)}
                 </span>
-              </div>
-              <div className="equation-result">
-                <div>
-                  <strong>{pct(displayedCalculation.posterior)}</strong>
-                  <span>Evidence-adjusted mastery</span>
-                </div>
-                <ChevronRight size={20} />
-                <div>
-                  <strong>{pct(displayedCalculation.afterLearning)}</strong>
-                  <span>Mastery for next question after learn = {decimal(displayedCalculation.learn)}</span>
-                </div>
+                <strong>{pct(displayedCalculation.afterLearning)}</strong>
+                <em>mastery for next question</em>
               </div>
             </div>
-            <div className="term-grid">
-              <div className="term-chip prior">
-                <strong>{decimal(displayedCalculation.masteryBefore)}</strong>
-                <span>P(Knows), mastery before this answer</span>
-              </div>
-              <div className="term-chip slip">
-                <strong>{decimal(displayedCalculation.knownObservationRate)}</strong>
-                <span>{knownRateLabel}</span>
-              </div>
-              <div className="term-chip evidence">
-                <strong>{decimal(displayedCalculation.knownEvidence)}</strong>
-                <span>{knownEvidenceLabel}</span>
-              </div>
-              <div className="term-chip prior">
-                <strong>{decimal(displayedCalculation.complement)}</strong>
-                <span>P(Not mastered), 1 - mastery</span>
-              </div>
-              <div className="term-chip guess">
-                <strong>{decimal(displayedCalculation.unknownObservationRate)}</strong>
-                <span>{unknownRateLabel}</span>
-              </div>
-              <div className="term-chip evidence">
-                <strong>{decimal(displayedCalculation.unknownEvidence)}</strong>
-                <span>{unknownEvidenceLabel}</span>
-              </div>
-            </div>
+            <p className="formula-caption">
+              Same equation underneath: P(Knows | {observationSymbol}) = {decimal(displayedCalculation.knownEvidence)} / (
+              {decimal(displayedCalculation.knownEvidence)} + {decimal(displayedCalculation.unknownEvidence)}).
+            </p>
             <p className="model-note">
               BKT was introduced through the knowledge tracing work of Albert Corbett and John Anderson for
               intelligent tutoring systems. This model is intentionally modifiable: parameters can vary by skill,

@@ -617,127 +617,160 @@ h2 {
   line-height: 1.45;
 }
 
-.equation-card {
+.bkt-flow {
   display: grid;
+  grid-template-columns: 160px minmax(0, 1fr) 170px 170px;
   gap: 12px;
-  padding: 16px;
+  align-items: stretch;
+  padding: 14px;
   border: 1px solid #bfd0f1;
   border-radius: 6px;
   background: #f8fbff;
 }
 
-.equation-row {
+.flow-source,
+.flow-result,
+.flow-next,
+.path-node {
   display: grid;
-  grid-template-columns: minmax(140px, 0.7fr) auto minmax(0, 2fr);
-  gap: 12px;
-  align-items: center;
-  color: #17243a;
-  font-family: var(--font-geist-mono), monospace;
-}
-
-.equation-row strong {
-  color: var(--blue-dark);
-  font-size: 1.2rem;
-}
-
-.equation-row > span:last-child {
-  display: grid;
-  justify-items: center;
-  gap: 5px;
-}
-
-.equation-row em {
-  width: 100%;
-  padding-top: 6px;
-  border-top: 2px solid #17243a;
-  color: #17243a;
-  font-style: normal;
-  text-align: center;
-}
-
-.equation-row.symbolic {
-  color: #33506f;
-  font-size: 0.82rem;
-}
-
-.equation-row.numeric {
-  font-size: 0.95rem;
-  font-weight: 800;
-}
-
-.equation-result {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-  gap: 14px;
-  align-items: center;
-  padding: 14px;
-  border-radius: 6px;
-  background: var(--navy);
-  color: #fff;
-}
-
-.equation-result strong {
-  display: block;
-  margin-bottom: 4px;
-  color: #fff;
-  font-size: 1.45rem;
-}
-
-.equation-result span {
-  color: #d8e4f4;
-  font-size: 0.82rem;
-  line-height: 1.4;
-}
-
-.equation-result svg {
-  color: #8fb5ff;
-}
-
-.term-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.term-chip {
-  min-height: 78px;
+  align-content: center;
+  min-height: 96px;
   padding: 12px;
-  border: 1px solid #dce4f0;
   border-radius: 6px;
 }
 
-.term-chip strong {
-  display: block;
-  margin-bottom: 4px;
-  color: #17243a;
-  font-size: 1.16rem;
+.flow-source {
+  border: 1px solid #cfdaf0;
+  background: #f3f7ff;
 }
 
-.term-chip span,
+.flow-source p,
+.flow-result p,
+.flow-next p {
+  margin: 0 0 5px;
+  color: #4d5a6d;
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.flow-source strong,
+.flow-result > strong,
+.flow-next strong,
+.path-node strong {
+  display: block;
+  color: #17243a;
+  font-size: 1.35rem;
+  line-height: 1.1;
+}
+
+.flow-source span,
+.flow-result span,
+.flow-next span,
+.path-node span,
+.formula-caption,
 .model-note {
   color: var(--ink-muted);
   font-size: 0.82rem;
   line-height: 1.4;
 }
 
-.term-chip.prior {
-  border-color: #cfdaf0;
-  background: #f3f7ff;
+.flow-branches {
+  display: grid;
+  gap: 10px;
 }
 
-.term-chip.slip {
+.flow-path {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(90px, 1fr) 20px minmax(110px, 1fr) 20px minmax(110px, 1fr);
+  gap: 8px;
+  align-items: center;
+}
+
+.path-node {
+  min-height: 84px;
+  border: 1px solid #dce4f0;
+  background: #fff;
+}
+
+.knows-path .path-node:nth-of-type(1),
+.knows-path .path-node:nth-of-type(2) {
   border-color: #bfe3e3;
   background: var(--mint);
 }
 
-.term-chip.guess {
+.not-path .path-node:nth-of-type(1),
+.not-path .path-node:nth-of-type(2) {
   border-color: #dfc7f2;
   background: #f7effd;
 }
 
-.term-chip.evidence {
+.path-node.evidence-node {
   border-color: #ffd0b5;
   background: #fff3eb;
+}
+
+.path-multiply,
+.path-equals {
+  display: grid;
+  place-items: center;
+  color: var(--blue-dark);
+  font-size: 1.1rem;
+  font-weight: 950;
+}
+
+.flow-result {
+  border: 1px solid #96b4ed;
+  background: #e8efff;
+}
+
+.mini-equation {
+  display: grid;
+  justify-items: center;
+  margin: 4px 0 8px;
+  color: #17243a;
+  font-family: var(--font-geist-mono), monospace;
+}
+
+.mini-equation strong {
+  width: 100%;
+  padding-bottom: 4px;
+  border-bottom: 2px solid #17243a;
+  text-align: center;
+}
+
+.mini-equation span {
+  padding-top: 4px;
+  color: #17243a;
+  font-weight: 800;
+}
+
+.flow-next {
+  border: 1px solid var(--navy);
+  background: var(--navy);
+}
+
+.flow-next p,
+.flow-next strong,
+.flow-next span,
+.flow-next em {
+  color: #fff;
+}
+
+.flow-next em {
+  margin-top: 4px;
+  font-size: 0.82rem;
+  font-style: normal;
+  line-height: 1.35;
+}
+
+.formula-caption {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: #eef4ff;
+  font-family: var(--font-geist-mono), monospace;
 }
 
 .model-note {
@@ -815,6 +848,10 @@ h2 {
     grid-template-columns: 1fr;
   }
 
+  .bkt-flow {
+    grid-template-columns: 1fr;
+  }
+
   .insight-column {
     grid-template-columns: 1fr 1fr;
   }
@@ -883,21 +920,23 @@ h2 {
     grid-template-columns: 1fr;
   }
 
-  .equation-row,
-  .equation-result,
-  .term-grid {
+  .flow-path {
     grid-template-columns: 1fr;
   }
 
-  .equation-row {
-    gap: 8px;
+  .path-multiply,
+  .path-equals {
+    min-height: 18px;
   }
 
-  .equation-row > span:last-child {
-    justify-items: start;
+  .flow-source,
+  .flow-result,
+  .flow-next,
+  .path-node {
+    min-height: 72px;
   }
 
-  .equation-row em {
-    text-align: left;
+  .formula-caption {
+    overflow-wrap: anywhere;
   }
 }
