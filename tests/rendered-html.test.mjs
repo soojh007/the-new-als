@@ -36,6 +36,9 @@ test("server-renders the adaptive learning product shell", async () => {
   assert.match(html, /Prototype mode\. Learner progress is local to this session\./);
   assert.match(html, /Student answer/);
   assert.match(html, /BKT parameters/);
+  assert.match(html, /Annotated BKT calculation/);
+  assert.match(html, /Knows and correct/);
+  assert.match(html, /Guessed and correct/);
   assert.match(html, /Reusable content object/);
   assert.doesNotMatch(html, /Your site is taking shape|react-loading-skeleton|codex-preview/i);
 });

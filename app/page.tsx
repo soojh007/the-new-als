@@ -150,6 +150,10 @@ function pct(value: number) {
   return `${Math.round(value * 100)}%`;
 }
 
+function decimal(value: number) {
+  return value.toFixed(3).replace(/0+$/, "").replace(/\.$/, "");
+}
+
 export default function Home() {
   const [skills, setSkills] = useState(initialSkills);
   const [currentId, setCurrentId] = useState(problems[1].id);
@@ -166,6 +170,11 @@ export default function Home() {
   const current = problems.find((problem) => problem.id === currentId) ?? problems[0];
   const activeSkill = skills[current.skill];
   const weakestSkill = Object.values(skills).sort((a, b) => a.mastery - b.mastery)[0];
+  const knowsAndCorrect = activeSkill.mastery * (1 - activeSkill.slip);
+  const guessAndCorrect = (1 - activeSkill.mastery) * activeSkill.guess;
+  const correctEvidence = knowsAndCorrect + guessAndCorrect;
+  const posteriorIfCorrect = knowsAndCorrect / correctEvidence;
+  const afterLearningIfCorrect = posteriorIfCorrect + (1 - posteriorIfCorrect) * activeSkill.learn;
 
   const recommended = useMemo(() => {
     const weak = Object.values(skills).sort((a, b) => a.mastery - b.mastery)[0];
@@ -463,6 +472,64 @@ export default function Home() {
                 <span>Reset learner</span>
               </button>
             </div>
+          </section>
+
+          <section className="bkt-explainer" aria-label="Annotated BKT calculation">
+            <div className="panel-title">
+              <Brain size={18} />
+              <h2>Annotated BKT calculation</h2>
+            </div>
+            <div className="formula-strip">
+              <div className="formula-token prior">
+                <strong>{decimal(activeSkill.mastery)}</strong>
+                <span>Current mastery</span>
+              </div>
+              <span className="operator">x</span>
+              <div className="formula-token slip">
+                <strong>{decimal(1 - activeSkill.slip)}</strong>
+                <span>Correct if they know it</span>
+              </div>
+              <span className="operator">=</span>
+              <div className="formula-token evidence">
+                <strong>{decimal(knowsAndCorrect)}</strong>
+                <span>Knows and correct</span>
+              </div>
+            </div>
+            <div className="formula-strip">
+              <div className="formula-token prior">
+                <strong>{decimal(1 - activeSkill.mastery)}</strong>
+                <span>Not mastered yet</span>
+              </div>
+              <span className="operator">x</span>
+              <div className="formula-token guess">
+                <strong>{decimal(activeSkill.guess)}</strong>
+                <span>Correct by guessing</span>
+              </div>
+              <span className="operator">=</span>
+              <div className="formula-token evidence">
+                <strong>{decimal(guessAndCorrect)}</strong>
+                <span>Guessed and correct</span>
+              </div>
+            </div>
+            <div className="posterior-card">
+              <div>
+                <strong>{pct(posteriorIfCorrect)}</strong>
+                <span>
+                  posterior mastery after a correct answer: {decimal(knowsAndCorrect)} / (
+                  {decimal(knowsAndCorrect)} + {decimal(guessAndCorrect)})
+                </span>
+              </div>
+              <ChevronRight size={20} />
+              <div>
+                <strong>{pct(afterLearningIfCorrect)}</strong>
+                <span>after adding the learn parameter ({decimal(activeSkill.learn)})</span>
+              </div>
+            </div>
+            <p className="model-note">
+              BKT was introduced through the knowledge tracing work of Albert Corbett and John Anderson for
+              intelligent tutoring systems. This model is intentionally modifiable: parameters can vary by skill,
+              learner group, problem difficulty, hint usage, or be learned from historical student data.
+            </p>
           </section>
         </section>
       </section>
