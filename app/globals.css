@@ -610,6 +610,13 @@ h2 {
   margin-top: 20px;
 }
 
+.calculation-context {
+  margin: -4px 0 2px;
+  color: #4d5a6d;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
 .formula-strip {
   display: grid;
   grid-template-columns: minmax(120px, 1fr) auto minmax(140px, 1fr) auto minmax(150px, 1fr);

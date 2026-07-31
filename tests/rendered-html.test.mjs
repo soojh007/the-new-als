@@ -36,7 +36,8 @@ test("server-renders the adaptive learning product shell", async () => {
   assert.match(html, /Prototype mode\. Learner progress is local to this session\./);
   assert.match(html, /Student answer/);
   assert.match(html, /BKT parameters/);
-  assert.match(html, /Annotated BKT calculation/);
+  assert.match(html, /Preview BKT calculation/);
+  assert.match(html, /No answer has been submitted/);
   assert.match(html, /Knows and correct/);
   assert.match(html, /Guessed and correct/);
   assert.match(html, /Reusable content object/);
@@ -51,7 +52,8 @@ test("removes disposable starter preview files and metadata", async () => {
     readFile(new URL("../README.md", import.meta.url), "utf8"),
   ]);
 
-  assert.match(page, /updateMastery/);
+  assert.match(page, /calculateBkt/);
+  assert.match(page, /Wrong despite knowing it/);
   assert.match(page, /Adaptive next/);
   assert.match(layout, /Adaptive Algebra Studio/);
   assert.match(packageJson, /"name": "adaptive-algebra-studio"/);

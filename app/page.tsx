@@ -50,6 +50,20 @@ type EventLog = {
   correct?: boolean;
 };
 
+type BktCalculation = {
+  correct: boolean;
+  skillLabel: string;
+  masteryBefore: number;
+  complement: number;
+  knownObservationRate: number;
+  unknownObservationRate: number;
+  knownEvidence: number;
+  unknownEvidence: number;
+  posterior: number;
+  afterLearning: number;
+  learn: number;
+};
+
 const initialSkills: Record<SkillId, Skill> = {
   "linear-equations": {
     id: "linear-equations",
@@ -137,13 +151,27 @@ function normalizeAnswer(value: string) {
   return value.toLowerCase().replace(/\s/g, "").replace(/\*/g, "");
 }
 
-function updateMastery(skill: Skill, correct: boolean) {
+function calculateBkt(skill: Skill, correct: boolean): BktCalculation {
   const { mastery, guess, slip, learn } = skill;
-  const posterior = correct
-    ? (mastery * (1 - slip)) / (mastery * (1 - slip) + (1 - mastery) * guess)
-    : (mastery * slip) / (mastery * slip + (1 - mastery) * (1 - guess));
+  const knownObservationRate = correct ? 1 - slip : slip;
+  const unknownObservationRate = correct ? guess : 1 - guess;
+  const knownEvidence = mastery * knownObservationRate;
+  const unknownEvidence = (1 - mastery) * unknownObservationRate;
+  const posterior = knownEvidence / (knownEvidence + unknownEvidence);
 
-  return Math.min(0.98, Math.max(0.02, posterior + (1 - posterior) * learn));
+  return {
+    correct,
+    skillLabel: skill.label,
+    masteryBefore: mastery,
+    complement: 1 - mastery,
+    knownObservationRate,
+    unknownObservationRate,
+    knownEvidence,
+    unknownEvidence,
+    posterior,
+    afterLearning: Math.min(0.98, Math.max(0.02, posterior + (1 - posterior) * learn)),
+    learn,
+  };
 }
 
 function pct(value: number) {
@@ -160,6 +188,7 @@ export default function Home() {
   const [answer, setAnswer] = useState("");
   const [hintCount, setHintCount] = useState(0);
   const [feedback, setFeedback] = useState<"correct" | "incorrect" | null>(null);
+  const [lastCalculation, setLastCalculation] = useState<BktCalculation | null>(null);
   const [events, setEvents] = useState<EventLog[]>([
     {
       label: "Lesson initialized",
@@ -170,11 +199,13 @@ export default function Home() {
   const current = problems.find((problem) => problem.id === currentId) ?? problems[0];
   const activeSkill = skills[current.skill];
   const weakestSkill = Object.values(skills).sort((a, b) => a.mastery - b.mastery)[0];
-  const knowsAndCorrect = activeSkill.mastery * (1 - activeSkill.slip);
-  const guessAndCorrect = (1 - activeSkill.mastery) * activeSkill.guess;
-  const correctEvidence = knowsAndCorrect + guessAndCorrect;
-  const posteriorIfCorrect = knowsAndCorrect / correctEvidence;
-  const afterLearningIfCorrect = posteriorIfCorrect + (1 - posteriorIfCorrect) * activeSkill.learn;
+  const previewCalculation = calculateBkt(activeSkill, true);
+  const displayedCalculation = lastCalculation ?? previewCalculation;
+  const observationText = displayedCalculation.correct ? "correct" : "wrong";
+  const knownRateLabel = displayedCalculation.correct ? "Correct if they know it" : "Wrong despite knowing it";
+  const unknownRateLabel = displayedCalculation.correct ? "Correct by guessing" : "Wrong if not mastered";
+  const knownEvidenceLabel = displayedCalculation.correct ? "Knows and correct" : "Knows but slipped";
+  const unknownEvidenceLabel = displayedCalculation.correct ? "Guessed and correct" : "Not mastered and wrong";
 
   const recommended = useMemo(() => {
     const weak = Object.values(skills).sort((a, b) => a.mastery - b.mastery)[0];
@@ -194,7 +225,8 @@ export default function Home() {
   function submitAnswer(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const correct = normalizeAnswer(answer) === normalizeAnswer(current.answer);
-    const updatedMastery = updateMastery(activeSkill, correct);
+    const calculation = calculateBkt(activeSkill, correct);
+    const updatedMastery = calculation.afterLearning;
     const nextSkills = {
       ...skills,
       [activeSkill.id]: {
@@ -204,6 +236,7 @@ export default function Home() {
     };
 
     setSkills(nextSkills);
+    setLastCalculation(calculation);
     setFeedback(correct ? "correct" : "incorrect");
     setEvents((items) => [
       {
@@ -231,6 +264,7 @@ export default function Home() {
     setCurrentId(next.id);
     setAnswer("");
     setFeedback(null);
+    setLastCalculation(null);
     setHintCount(0);
     setEvents((items) => [
       {
@@ -247,6 +281,7 @@ export default function Home() {
     setAnswer("");
     setHintCount(0);
     setFeedback(null);
+    setLastCalculation(null);
     setEvents([{ label: "Session reset", detail: "Mastery estimates returned to the seed learner profile." }]);
   }
 
@@ -477,52 +512,57 @@ export default function Home() {
           <section className="bkt-explainer" aria-label="Annotated BKT calculation">
             <div className="panel-title">
               <Brain size={18} />
-              <h2>Annotated BKT calculation</h2>
+              <h2>{lastCalculation ? "Last answer BKT calculation" : "Preview BKT calculation"}</h2>
             </div>
+            <p className="calculation-context">
+              {lastCalculation
+                ? `This uses the ${displayedCalculation.skillLabel} mastery before the learner's ${observationText} answer.`
+                : "No answer has been submitted for this problem yet, so this previews the correct-answer path."}
+            </p>
             <div className="formula-strip">
               <div className="formula-token prior">
-                <strong>{decimal(activeSkill.mastery)}</strong>
-                <span>Current mastery</span>
+                <strong>{decimal(displayedCalculation.masteryBefore)}</strong>
+                <span>Mastery before answer</span>
               </div>
               <span className="operator">x</span>
               <div className="formula-token slip">
-                <strong>{decimal(1 - activeSkill.slip)}</strong>
-                <span>Correct if they know it</span>
+                <strong>{decimal(displayedCalculation.knownObservationRate)}</strong>
+                <span>{knownRateLabel}</span>
               </div>
               <span className="operator">=</span>
               <div className="formula-token evidence">
-                <strong>{decimal(knowsAndCorrect)}</strong>
-                <span>Knows and correct</span>
+                <strong>{decimal(displayedCalculation.knownEvidence)}</strong>
+                <span>{knownEvidenceLabel}</span>
               </div>
             </div>
             <div className="formula-strip">
               <div className="formula-token prior">
-                <strong>{decimal(1 - activeSkill.mastery)}</strong>
+                <strong>{decimal(displayedCalculation.complement)}</strong>
                 <span>Not mastered yet</span>
               </div>
               <span className="operator">x</span>
               <div className="formula-token guess">
-                <strong>{decimal(activeSkill.guess)}</strong>
-                <span>Correct by guessing</span>
+                <strong>{decimal(displayedCalculation.unknownObservationRate)}</strong>
+                <span>{unknownRateLabel}</span>
               </div>
               <span className="operator">=</span>
               <div className="formula-token evidence">
-                <strong>{decimal(guessAndCorrect)}</strong>
-                <span>Guessed and correct</span>
+                <strong>{decimal(displayedCalculation.unknownEvidence)}</strong>
+                <span>{unknownEvidenceLabel}</span>
               </div>
             </div>
             <div className="posterior-card">
               <div>
-                <strong>{pct(posteriorIfCorrect)}</strong>
+                <strong>{pct(displayedCalculation.posterior)}</strong>
                 <span>
-                  posterior mastery after a correct answer: {decimal(knowsAndCorrect)} / (
-                  {decimal(knowsAndCorrect)} + {decimal(guessAndCorrect)})
+                  evidence-adjusted mastery after a {observationText} answer: {decimal(displayedCalculation.knownEvidence)} / (
+                  {decimal(displayedCalculation.knownEvidence)} + {decimal(displayedCalculation.unknownEvidence)})
                 </span>
               </div>
               <ChevronRight size={20} />
               <div>
-                <strong>{pct(afterLearningIfCorrect)}</strong>
-                <span>after adding the learn parameter ({decimal(activeSkill.learn)})</span>
+                <strong>{pct(displayedCalculation.afterLearning)}</strong>
+                <span>mastery for the next question after adding learn ({decimal(displayedCalculation.learn)})</span>
               </div>
             </div>
             <p className="model-note">
