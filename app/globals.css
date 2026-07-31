@@ -617,65 +617,55 @@ h2 {
   line-height: 1.45;
 }
 
-.formula-strip {
+.equation-card {
   display: grid;
-  grid-template-columns: minmax(120px, 1fr) auto minmax(140px, 1fr) auto minmax(150px, 1fr);
-  gap: 10px;
-  align-items: stretch;
-}
-
-.formula-token {
-  min-height: 74px;
-  padding: 12px;
-  border: 1px solid #dce4f0;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #bfd0f1;
   border-radius: 6px;
   background: #f8fbff;
 }
 
-.formula-token strong {
-  display: block;
-  margin-bottom: 4px;
-  color: #17243a;
-  font-size: 1.25rem;
-}
-
-.formula-token span,
-.posterior-card span,
-.model-note {
-  color: var(--ink-muted);
-  font-size: 0.82rem;
-  line-height: 1.4;
-}
-
-.formula-token.prior {
-  border-color: #cfdaf0;
-  background: #f3f7ff;
-}
-
-.formula-token.slip {
-  border-color: #bfe3e3;
-  background: var(--mint);
-}
-
-.formula-token.guess {
-  border-color: #dfc7f2;
-  background: #f7effd;
-}
-
-.formula-token.evidence {
-  border-color: #ffd0b5;
-  background: #fff3eb;
-}
-
-.operator {
+.equation-row {
   display: grid;
-  place-items: center;
-  color: #445065;
-  font-size: 1.2rem;
-  font-weight: 900;
+  grid-template-columns: minmax(140px, 0.7fr) auto minmax(0, 2fr);
+  gap: 12px;
+  align-items: center;
+  color: #17243a;
+  font-family: var(--font-geist-mono), monospace;
 }
 
-.posterior-card {
+.equation-row strong {
+  color: var(--blue-dark);
+  font-size: 1.2rem;
+}
+
+.equation-row > span:last-child {
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+}
+
+.equation-row em {
+  width: 100%;
+  padding-top: 6px;
+  border-top: 2px solid #17243a;
+  color: #17243a;
+  font-style: normal;
+  text-align: center;
+}
+
+.equation-row.symbolic {
+  color: #33506f;
+  font-size: 0.82rem;
+}
+
+.equation-row.numeric {
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.equation-result {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   gap: 14px;
@@ -686,19 +676,68 @@ h2 {
   color: #fff;
 }
 
-.posterior-card strong {
+.equation-result strong {
   display: block;
   margin-bottom: 4px;
   color: #fff;
-  font-size: 1.35rem;
+  font-size: 1.45rem;
 }
 
-.posterior-card span {
+.equation-result span {
   color: #d8e4f4;
+  font-size: 0.82rem;
+  line-height: 1.4;
 }
 
-.posterior-card svg {
+.equation-result svg {
   color: #8fb5ff;
+}
+
+.term-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.term-chip {
+  min-height: 78px;
+  padding: 12px;
+  border: 1px solid #dce4f0;
+  border-radius: 6px;
+}
+
+.term-chip strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #17243a;
+  font-size: 1.16rem;
+}
+
+.term-chip span,
+.model-note {
+  color: var(--ink-muted);
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.term-chip.prior {
+  border-color: #cfdaf0;
+  background: #f3f7ff;
+}
+
+.term-chip.slip {
+  border-color: #bfe3e3;
+  background: var(--mint);
+}
+
+.term-chip.guess {
+  border-color: #dfc7f2;
+  background: #f7effd;
+}
+
+.term-chip.evidence {
+  border-color: #ffd0b5;
+  background: #fff3eb;
 }
 
 .model-note {
@@ -844,12 +883,21 @@ h2 {
     grid-template-columns: 1fr;
   }
 
-  .formula-strip,
-  .posterior-card {
+  .equation-row,
+  .equation-result,
+  .term-grid {
     grid-template-columns: 1fr;
   }
 
-  .operator {
-    min-height: 20px;
+  .equation-row {
+    gap: 8px;
+  }
+
+  .equation-row > span:last-child {
+    justify-items: start;
+  }
+
+  .equation-row em {
+    text-align: left;
   }
 }

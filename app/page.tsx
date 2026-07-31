@@ -202,6 +202,9 @@ export default function Home() {
   const previewCalculation = calculateBkt(activeSkill, true);
   const displayedCalculation = lastCalculation ?? previewCalculation;
   const observationText = displayedCalculation.correct ? "correct" : "wrong";
+  const observationSymbol = displayedCalculation.correct ? "Correct" : "Wrong";
+  const knownObservationSymbol = displayedCalculation.correct ? "P(Correct | Knows)" : "P(Wrong | Knows)";
+  const unknownObservationSymbol = displayedCalculation.correct ? "P(Correct | Not mastered)" : "P(Wrong | Not mastered)";
   const knownRateLabel = displayedCalculation.correct ? "Correct if they know it" : "Wrong despite knowing it";
   const unknownRateLabel = displayedCalculation.correct ? "Correct by guessing" : "Wrong if not mastered";
   const knownEvidenceLabel = displayedCalculation.correct ? "Knows and correct" : "Knows but slipped";
@@ -519,50 +522,72 @@ export default function Home() {
                 ? `This uses the ${displayedCalculation.skillLabel} mastery before the learner's ${observationText} answer.`
                 : "No answer has been submitted for this problem yet, so this previews the correct-answer path."}
             </p>
-            <div className="formula-strip">
-              <div className="formula-token prior">
-                <strong>{decimal(displayedCalculation.masteryBefore)}</strong>
-                <span>Mastery before answer</span>
+            <div className="equation-card">
+              <div className="equation-row symbolic">
+                <span>P(Knows | {observationSymbol})</span>
+                <strong>=</strong>
+                <span>
+                  P(Knows) x {knownObservationSymbol}
+                  <em>P(Knows) x {knownObservationSymbol} + P(Not mastered) x {unknownObservationSymbol}</em>
+                </span>
               </div>
-              <span className="operator">x</span>
-              <div className="formula-token slip">
+              <div className="equation-row numeric">
+                <span>P(Knows | {observationSymbol})</span>
+                <strong>=</strong>
+                <span>
+                  {decimal(displayedCalculation.masteryBefore)} x {decimal(displayedCalculation.knownObservationRate)}
+                  <em>
+                    {decimal(displayedCalculation.masteryBefore)} x {decimal(displayedCalculation.knownObservationRate)} +{" "}
+                    {decimal(displayedCalculation.complement)} x {decimal(displayedCalculation.unknownObservationRate)}
+                  </em>
+                </span>
+              </div>
+              <div className="equation-row numeric">
+                <span>P(Knows | {observationSymbol})</span>
+                <strong>=</strong>
+                <span>
+                  {decimal(displayedCalculation.knownEvidence)}
+                  <em>
+                    {decimal(displayedCalculation.knownEvidence)} + {decimal(displayedCalculation.unknownEvidence)}
+                  </em>
+                </span>
+              </div>
+              <div className="equation-result">
+                <div>
+                  <strong>{pct(displayedCalculation.posterior)}</strong>
+                  <span>Evidence-adjusted mastery</span>
+                </div>
+                <ChevronRight size={20} />
+                <div>
+                  <strong>{pct(displayedCalculation.afterLearning)}</strong>
+                  <span>Mastery for next question after learn = {decimal(displayedCalculation.learn)}</span>
+                </div>
+              </div>
+            </div>
+            <div className="term-grid">
+              <div className="term-chip prior">
+                <strong>{decimal(displayedCalculation.masteryBefore)}</strong>
+                <span>P(Knows), mastery before this answer</span>
+              </div>
+              <div className="term-chip slip">
                 <strong>{decimal(displayedCalculation.knownObservationRate)}</strong>
                 <span>{knownRateLabel}</span>
               </div>
-              <span className="operator">=</span>
-              <div className="formula-token evidence">
+              <div className="term-chip evidence">
                 <strong>{decimal(displayedCalculation.knownEvidence)}</strong>
                 <span>{knownEvidenceLabel}</span>
               </div>
-            </div>
-            <div className="formula-strip">
-              <div className="formula-token prior">
+              <div className="term-chip prior">
                 <strong>{decimal(displayedCalculation.complement)}</strong>
-                <span>Not mastered yet</span>
+                <span>P(Not mastered), 1 - mastery</span>
               </div>
-              <span className="operator">x</span>
-              <div className="formula-token guess">
+              <div className="term-chip guess">
                 <strong>{decimal(displayedCalculation.unknownObservationRate)}</strong>
                 <span>{unknownRateLabel}</span>
               </div>
-              <span className="operator">=</span>
-              <div className="formula-token evidence">
+              <div className="term-chip evidence">
                 <strong>{decimal(displayedCalculation.unknownEvidence)}</strong>
                 <span>{unknownEvidenceLabel}</span>
-              </div>
-            </div>
-            <div className="posterior-card">
-              <div>
-                <strong>{pct(displayedCalculation.posterior)}</strong>
-                <span>
-                  evidence-adjusted mastery after a {observationText} answer: {decimal(displayedCalculation.knownEvidence)} / (
-                  {decimal(displayedCalculation.knownEvidence)} + {decimal(displayedCalculation.unknownEvidence)})
-                </span>
-              </div>
-              <ChevronRight size={20} />
-              <div>
-                <strong>{pct(displayedCalculation.afterLearning)}</strong>
-                <span>mastery for the next question after adding learn ({decimal(displayedCalculation.learn)})</span>
               </div>
             </div>
             <p className="model-note">

@@ -38,6 +38,10 @@ test("server-renders the adaptive learning product shell", async () => {
   assert.match(html, /BKT parameters/);
   assert.match(html, /Preview BKT calculation/);
   assert.match(html, /No answer has been submitted/);
+  assert.match(html, /P\(Knows/);
+  assert.match(html, /P\(Correct/);
+  assert.match(html, /Evidence-adjusted mastery/);
+  assert.match(html, /Mastery for next question/);
   assert.match(html, /Knows and correct/);
   assert.match(html, /Guessed and correct/);
   assert.match(html, /Reusable content object/);
