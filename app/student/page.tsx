@@ -85,6 +85,8 @@ export default function StudentPortalPage() {
   const [tempTargetValue, setTempTargetValue] = useState<number>(2);
   const [showRepairDetails, setShowRepairDetails] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const [showMissionsBlock, setShowMissionsBlock] = useState(true);
+  const [showSubjectsBlock, setShowSubjectsBlock] = useState(true);
 
   // Streak & Comeback Resilience data
   const [streakDays, setStreakDays] = useState(3);
@@ -875,20 +877,41 @@ export default function StudentPortalPage() {
           {/* ------------------------------------------------------------- */}
           {/* 5. TODAY'S MISSIONS: CLEARLY HIGHLIGHTING RECOMMENDED MODE */}
           {/* ------------------------------------------------------------- */}
-          <section className="space-y-3">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-gray-800 flex items-center gap-2">
-                <Compass size={16} className="text-[#1854cb]" />
-                <span>Today&apos;s Missions</span>
-              </h3>
+          <section className="bg-white rounded-2xl p-5 shadow-xs border border-gray-200 space-y-3">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h3 className="text-sm font-bold uppercase tracking-wider text-gray-800 flex items-center gap-2">
+                  <Compass size={16} className="text-[#1854cb]" />
+                  <span>Today&apos;s Missions</span>
+                </h3>
+                <p className="text-xs text-gray-500">
+                  Choose the learning mode that fits what you want to do next
+                </p>
+              </div>
 
-              {/* AI Recommendation Indicator */}
-              <div className="flex items-center gap-1.5 text-xs font-bold text-[#1854cb] bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
-                <Sparkles size={13} className="fill-[#1854cb]" />
-                <span>Recommended: {recommendedLoopInfo.title}</span>
+              <div className="flex flex-wrap items-center gap-2">
+                {/* AI Recommendation Indicator */}
+                <div className="flex items-center gap-1.5 text-xs font-bold text-[#1854cb] bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
+                  <Sparkles size={13} className="fill-[#1854cb]" />
+                  <span>Recommended: {recommendedLoopInfo.title}</span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setShowMissionsBlock((shown) => !shown)}
+                  aria-expanded={showMissionsBlock}
+                  className="inline-flex items-center gap-1 rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs font-bold text-gray-600 hover:border-blue-300 hover:bg-blue-50 hover:text-[#1854cb] transition"
+                >
+                  <span>{showMissionsBlock ? "Hide" : "Show"}</span>
+                  <ChevronRight
+                    size={14}
+                    className={`transition-transform ${showMissionsBlock ? "rotate-90" : ""}`}
+                  />
+                </button>
               </div>
             </div>
 
+            {showMissionsBlock && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
               {[
                 {
@@ -1009,6 +1032,7 @@ export default function StudentPortalPage() {
                 );
               })}
             </div>
+            )}
           </section>
 
           {/* ------------------------------------------------------------- */}
@@ -1025,8 +1049,21 @@ export default function StudentPortalPage() {
                   Switch active subject in 1-click without scrolling through dozens of cards
                 </p>
               </div>
+              <button
+                type="button"
+                onClick={() => setShowSubjectsBlock((shown) => !shown)}
+                aria-expanded={showSubjectsBlock}
+                className="inline-flex items-center gap-1 rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs font-bold text-gray-600 hover:border-blue-300 hover:bg-blue-50 hover:text-[#1854cb] transition"
+              >
+                <span>{showSubjectsBlock ? "Hide" : "Show"}</span>
+                <ChevronRight
+                  size={14}
+                  className={`transition-transform ${showSubjectsBlock ? "rotate-90" : ""}`}
+                />
+              </button>
             </div>
 
+            {showSubjectsBlock && (
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {[
                 {
@@ -1104,6 +1141,7 @@ export default function StudentPortalPage() {
                 );
               })}
             </div>
+            )}
           </section>
 
           {/* ------------------------------------------------------------- */}
